@@ -23,6 +23,10 @@ class ListsController < ApplicationController
     @lists = List.all
   end
 
+# show や edit ではparams[:id]とやってるのは指定しているから。
+# createやupdateでlist_paramsにしているのは、受け取るのは全部のデータだから、悪意のあるデータも受け取ってしまう。
+# だから、全部のデータを受け取るものに関してはprivate でまとめて指定している。
+
   def show
     @list = List.find(params[:id])
   end
@@ -37,10 +41,16 @@ class ListsController < ApplicationController
     redirect_to list_path(list.id)
   end
 
+  def destroy
+    list = List.find(params[:id])
+    list.destroy
+    redirect_to '/lists'
+  end
+
   private
   # ストロングパラメータ
   # privateより後に定義されたメソッドは、アクションとして認識されなくなり、URLと対応できなくなります。
   def list_params
-    params.require(:list).permit(:title, :body)
+    params.require(:list).permit(:title, :body, :image)
   end
 end

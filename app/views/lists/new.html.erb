@@ -1,3 +1,4 @@
+<!-- ここにおけるヘルパーとはHTMLにおける特定のタグを生成するのを助けるものである-->
 <h1>新規投稿</h1>
 <!-- form_with部分 -->
 <%= form_with model: @list, url: '/lists', method: :post do |f| %>
@@ -6,6 +7,10 @@
 
   <h4>本文</h4>
   <%=f.text_area :body %>
+  
+  <h4>画像</h4>
+  <!-- ファイルフィールドなので画像ファイル以外も受け付けてしまう。それをacceptで制限してる-->
+  <%= f.file_field :image, accept: "image/*" %>
 
   <%= f.submit '投稿' %>
 <% end %>
