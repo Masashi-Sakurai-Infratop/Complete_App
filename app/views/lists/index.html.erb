@@ -3,6 +3,8 @@
 
   <p>タイトル</p>
   <!-- list.[カラム名]と記述することで、レコードのカラムの内容を表示できます -->
-  <span><%= list.title %></span>
+  <span>
+    <%= link_to list.title, list_path(list.id) %>
+  </span>
 
 <% end %>
