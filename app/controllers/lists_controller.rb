@@ -4,13 +4,27 @@ class ListsController < ApplicationController
     @list = List.new
   end
 
+# redirect_to はHTTPメソッドとURLをルーティングに渡し、ルーターはどのコントローラのどのアクションを実行するか決める。
+# 一方で、renderは表示させてるHTMLが入れ替わるのみ。
+# 違いは「新たにアクションを実行するか否か」
+# この場合、createアクション内のrender :new によってnewアクションが呼び出されることはないということ
+# 逆に、redirect_to "lists/new"にしてしまうと,インスタンス変数の情報がなくなってしまう。
   def create
     # 1. データを受け取り、受け取ったデータを元にインスタンスを作成する。
-    list = List.new(list_params)
+    @list = List.new(list_params)
     # 2. データをデータベースに保存するためのsaveメソッド実行
-    list.save
+    if @list.save
+      redirect_to list_path(@list.id)
     # 3. トップ画面へのリダイレクト
-    redirect_to list_path(list.id)
+    else
+      ## ビュー内のインスタンス変数は、そのビューを呼び出したアクション内で用意されたインスタンス変数を参照します。
+      ## だからrender :indexじゃ@listsの変数がないよってエラーが出る,なぜなら、createアクション内に@lists変数がないため。
+      ## エラーメッセージを扱う際にはrender、それ以外はredirect_toを使う
+      # render :index
+      render :new
+      ## 下記のようにnewアクションをredirect_to でしてしまうとnewアクション内で再度@list=List.newが実行されエラーログがインスタンス変数からない状態になってしまう。
+      #redirect_to "/lists/new"
+    end
   end
 
   def index
@@ -28,7 +42,7 @@ class ListsController < ApplicationController
 # だから、全部のデータを受け取るものに関してはprivate でまとめて指定している。
 
   def show
-    @list = List.find(params[:id])
+     @list = List.find(params[:id])
   end
 
   def edit
