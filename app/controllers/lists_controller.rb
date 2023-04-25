@@ -14,6 +14,8 @@ class ListsController < ApplicationController
     @list = List.new(list_params)
     # 2. データをデータベースに保存するためのsaveメソッド実行
     if @list.save
+      flash[:notice] = "投稿が完了しました"
+
       redirect_to list_path(@list.id)
     # 3. トップ画面へのリダイレクト
     else
